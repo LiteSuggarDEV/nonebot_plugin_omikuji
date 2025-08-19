@@ -148,7 +148,7 @@ OMIKUJI_SCHEMA_META = ToolFunctionSchema(
                 ),
                 "end": FunctionPropertySchema(
                     type="string",
-                    description="主题总结(不包含引号)：e.g. '🦊 小狐甩着尾巴：「虽是中吉，但会有趣事发生呢！要找月光石的话，今晚满月正是好时机哟～」'",
+                    description="主题总结(不包含引号)",
                 ),
             },
             required=[
