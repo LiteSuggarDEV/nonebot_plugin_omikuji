@@ -2,9 +2,11 @@ from nonebot import get_driver
 from nonebot.plugin import PluginMetadata, require
 
 require("nonebot_plugin_suggarchat")
+from nonebot_plugin_suggarchat.API import ToolsManager
+
 from . import llm_tool
 from .config import get_config
-from .llm_tool import TOOL_DATA, manager
+from .llm_tool import TOOL_DATA
 
 __plugin_meta__ = PluginMetadata(
     name="御神签",
@@ -21,4 +23,4 @@ __all__ = ["llm_tool"]
 async def init():
     conf = get_config()
     if conf.enable_omikuji:
-        manager.register_tool(TOOL_DATA)
+        ToolsManager().register_tool(TOOL_DATA)
