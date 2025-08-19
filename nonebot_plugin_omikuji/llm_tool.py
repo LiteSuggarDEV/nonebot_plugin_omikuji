@@ -16,7 +16,7 @@ from nonebot_plugin_suggarchat.API import (
     config_manager,
     tools_caller,
 )
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from .config import get_config
 
@@ -31,7 +31,7 @@ class OmikujiSections(BaseModel):
 
 
 class OmikujiData(BaseModel):
-    level: str
+    level: str = Field(default_factory=lambda: random.choice(LEVEL))
     theme: str
     sign_number: str
     divine_title: str
@@ -56,7 +56,6 @@ async def get_omikuji(level: str, theme: str, is_group: bool = False) -> Omikuji
     )
     assert data.tool_calls
     args = json.loads(data.tool_calls[0].function.arguments)
-    args["level"] = level
     return OmikujiData.model_validate(args)
 
 
