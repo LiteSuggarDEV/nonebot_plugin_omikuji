@@ -6,10 +6,15 @@ from nonebot_plugin_suggarchat.API import (
     tools_caller,
 )
 
-from .models import OMIKUJI_SCHEMA_META, OmikujiData
+from .models import OMIKUJI_SCHEMA_META, OmikujiData, random_level
 
 
-async def get_omikuji(level: str, theme: str, is_group: bool = False) -> OmikujiData:
+async def get_omikuji(
+    theme: str,
+    is_group: bool = False,
+    level: str = "",
+) -> OmikujiData:
+    level = level or random_level()
     system_prompt = deepcopy(
         config_manager.group_train if is_group else config_manager.private_train
     )
@@ -25,7 +30,8 @@ async def get_omikuji(level: str, theme: str, is_group: bool = False) -> Omikuji
     assert data.tool_calls
     args = json.loads(data.tool_calls[0].function.arguments)
     model = OmikujiData.model_validate(args)
-    model.level = level
+    if level:
+        model.level = level
     return model
 
 

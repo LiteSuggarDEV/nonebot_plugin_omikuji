@@ -1,4 +1,3 @@
-import random
 import typing
 
 from nonebot import get_bot, logger
@@ -8,8 +7,9 @@ from nonebot_plugin_suggarchat.API import (
     ToolData,
 )
 
+from .cache import get_cached_omikuji
 from .config import get_config
-from .models import FUNC_META, LEVEL, LEVEL_WEIGHTS
+from .models import FUNC_META
 from .utils import format_omikuji, get_omikuji
 
 
@@ -21,12 +21,11 @@ async def omikuji(ctx: ToolContext):
         ctx.event._nbevent,
         "轻轻摇动古老的签筒，竹签哗啦作响... 心中默念所求之事... 一支签缓缓落下。",
     )
-    level = random.choices(LEVEL, weights=LEVEL_WEIGHTS)[0]
-    data = await get_omikuji(
-        level,
-        ctx.data["theme"],
-        is_group=hasattr(nb_event, "group_id"),
-    )
+    if (data := await get_cached_omikuji(nb_event)) is None:
+        data = await get_omikuji(
+            ctx.data["theme"],
+            is_group=hasattr(nb_event, "group_id"),
+        )
     if get_config().omikuji_send_by_chat:
         return data.model_dump_json()
     msg = format_omikuji(data)

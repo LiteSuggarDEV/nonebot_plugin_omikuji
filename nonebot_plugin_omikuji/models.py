@@ -1,5 +1,6 @@
+from __future__ import annotations
+
 import random
-from datetime import datetime
 
 from nonebot_plugin_suggarchat.API import (
     FunctionDefinitionSchema,
@@ -14,15 +15,17 @@ LEVEL = ["大吉", "吉", "中吉", "小吉", "末吉", "凶", "大凶"]
 LEVEL_WEIGHTS = [10, 30, 20, 15, 10, 5, 2]
 
 
+def random_level() -> str:
+    return random.choices(LEVEL, weights=LEVEL_WEIGHTS)[0]
+
+
 class OmikujiSections(BaseModel):
     name: str
     content: str
 
 
 class OmikujiData(BaseModel):
-    level: str = Field(
-        default_factory=lambda: random.choices(LEVEL, weights=LEVEL_WEIGHTS)[0]
-    )
+    level: str = Field(default_factory=random_level)
     theme: str
     sign_number: str
     divine_title: str
@@ -31,9 +34,6 @@ class OmikujiData(BaseModel):
     intro: str
     end: str
 
-class OmikujiCache(BaseModel):
-    data: OmikujiData
-    timestamp: datetime = Field(default_factory=datetime.now)
 
 OMIKUJI_SCHEMA_META = ToolFunctionSchema(
     strict=True,
