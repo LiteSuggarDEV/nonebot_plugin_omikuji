@@ -1,20 +1,69 @@
 import json
+import random
 from copy import deepcopy
+from datetime import datetime, timedelta
 
+from nonebot import logger
 from nonebot_plugin_suggarchat.API import (
     config_manager,
     tools_caller,
 )
 
-from .models import OMIKUJI_SCHEMA_META, OmikujiData, random_level
+from .cache import OmikujiCacheData
+from .config import get_config
+from .models import (
+    OMIKUJI_SCHEMA_META,
+    THEME_TYPE,
+    OmikujiData,
+    OmikujiSections,
+    random_level,
+)
 
 
+async def _hit_cache_omikuji(
+    theme: THEME_TYPE,
+    level: str = "",
+) -> OmikujiData | None:
+    if cache := await OmikujiCacheData.get(level, theme):
+        if cache.updated_date < (
+            datetime.now() - timedelta(days=get_config().omikuji_cache_expire_days)
+        ).strftime("%Y-%m-%d"):
+            logger.debug(f"{theme}/{level} cache expired!")
+            return
+        logger.debug(f"{theme}/{level} cache hit!")
+        keys = list(cache.sections.keys())
+        random.shuffle(keys)
+        sections = [
+            OmikujiSections(name=k, content=random.choice(cache.sections[k]))
+            for k in keys
+        ]
+        if len(sections) < 4:
+            return
+        while len(sections) > 8:
+            sections.pop()
+
+        model = OmikujiData(
+            level=level,
+            theme=theme,
+            sections=sections,
+            sign_number=random.choice([i.content for i in cache.sign_number]),
+            intro=random.choice([i.content for i in cache.intro]),
+            divine_title=random.choice([i.content for i in cache.divine_title]),
+            maxim=random.choice([i.content for i in cache.maxim]),
+            end=random.choice([i.content for i in cache.end]),
+        )
+        return model
 async def get_omikuji(
-    theme: str,
+    theme: THEME_TYPE,
     is_group: bool = False,
     level: str = "",
 ) -> OmikujiData:
+    config = get_config()
     level = level or random_level()
+    if config.omikuji_use_cache:
+        if cache := await _hit_cache_omikuji(theme, level):
+            return cache
+    logger.debug(f"theme: {theme}, level: {level} Cache miss")
     system_prompt = deepcopy(
         config_manager.group_train if is_group else config_manager.private_train
     )
@@ -32,6 +81,8 @@ async def get_omikuji(
     model = OmikujiData.model_validate(args)
     if level:
         model.level = level
+    if config.omikuji_use_cache:
+        await OmikujiCacheData.cache_omikuji(model)
     return model
 
 

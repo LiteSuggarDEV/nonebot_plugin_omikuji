@@ -10,7 +10,7 @@ from sqlalchemy import delete, select
 from typing_extensions import Self
 
 from .config import get_cache_dir, get_config
-from .models import OmikujiData
+from .models import THEME_TYPE, OmikujiData
 from .sql_models import OmikujiCache as SQLOmikujiCache
 from .sql_models import db_lock
 
@@ -49,7 +49,7 @@ class OmikujiCacheContent(BaseModel):
 
 class OmikujiCacheData(BaseModel):
     level: str
-    theme: str
+    theme: THEME_TYPE
     sections: dict[str, list[str]]
     intro: list[OmikujiCacheContent]
     maxim: list[OmikujiCacheContent]
@@ -61,7 +61,7 @@ class OmikujiCacheData(BaseModel):
 
     @overload
     @classmethod
-    async def get(cls, level: str, theme: str) -> Self | None: ...
+    async def get(cls, level: str, theme: THEME_TYPE) -> Self | None: ...
 
     @overload
     @classmethod
@@ -69,7 +69,7 @@ class OmikujiCacheData(BaseModel):
 
     @classmethod
     async def get(
-        cls, level: str, theme: str | None = None
+        cls, level: str, theme: THEME_TYPE | None = None
     ) -> Self | dict[str, Self] | None:
         async with db_lock(theme, level):
             async with get_session() as session:
@@ -95,6 +95,15 @@ class OmikujiCacheData(BaseModel):
 
     @classmethod
     async def cache_omikuji(cls, data: OmikujiData) -> None:
+        config = get_config()
+
+        def unique_append(ls: list[dict[str, str]], content: str):
+            d = OmikujiCacheContent(content=content).model_dump()
+            if d not in ls:
+                ls.append(d)
+            while len(d) > config.omikuji_long_cache_update_max_count:
+                ls.pop(0)
+
         async with db_lock(data.theme, data.level):
             async with get_session() as session:
                 await cls._expire_cache(session=session)
@@ -113,6 +122,17 @@ class OmikujiCacheData(BaseModel):
                         theme=data.theme,
                         level=data.level,
                         sections={i.name: [i.content] for i in data.sections},
+                        intro=[
+                            OmikujiCacheContent(content=data.sign_number).model_dump()
+                        ],
+                        maxim=[OmikujiCacheContent(content=data.maxim).model_dump()],
+                        end=[OmikujiCacheContent(content=data.end).model_dump()],
+                        divine_title=[
+                            OmikujiCacheContent(content=data.divine_title).model_dump()
+                        ],
+                        sign_number=[
+                            OmikujiCacheContent(content=data.sign_number).model_dump()
+                        ],
                     )
                     session.add(cache)
                     await session.commit()
@@ -125,36 +145,17 @@ class OmikujiCacheData(BaseModel):
                 divine_title = cache.divine_title
                 sign_number = cache.sign_number
 
-                for name in sections.keys():
-                    for i in data.sections:
-                        if i.name == name:
-                            if i.content in sections[name]:
-                                continue
-                            sections[name].append(i.content)
+                for i in data.sections:
+                    if i.name not in sections:
+                        sections[i.name] = []
+                    if i.content not in sections[i.name]:
+                        sections[i.name].append(i.content)
 
-                data_intro = OmikujiCacheContent(content=data.intro).model_dump()
-                if data_intro not in intro:
-                    intro.append(data_intro)
-
-                data_maxim = OmikujiCacheContent(content=data.maxim).model_dump()
-                if data_maxim not in maxim:
-                    maxim.append(data_maxim)
-
-                data_end = OmikujiCacheContent(content=data.end).model_dump()
-                if data_end not in end:
-                    end.append(data_end)
-
-                data_devine_title = OmikujiCacheContent(
-                    content=data.divine_title
-                ).model_dump()
-                if data_devine_title not in divine_title:
-                    divine_title.append(data_devine_title)
-
-                data_sign_number = OmikujiCacheContent(
-                    content=data.sign_number
-                ).model_dump()
-                if data_sign_number not in sign_number:
-                    sign_number.append(data_sign_number)
+                unique_append(intro, data.intro)
+                unique_append(maxim, data.maxim)
+                unique_append(end, data.end)
+                unique_append(divine_title, data.divine_title)
+                unique_append(sign_number, data.sign_number)
 
                 cache.intro = intro
                 cache.sections = sections
@@ -168,13 +169,24 @@ class OmikujiCacheData(BaseModel):
     @staticmethod
     async def _expire_cache(*, session: AsyncSession) -> None:
         config = get_config()
-        if config.omikuji_cache_expire_days > 0:
-            expire_time = datetime.now() - timedelta(
-                days=config.omikuji_cache_expire_days
-            )
-            await session.execute(
-                delete(SQLOmikujiCache).where(
-                    SQLOmikujiCache.updated_date < expire_time.strftime("%Y-%m-%d")
+        if not config.omikuji_long_cache_mode:
+            if config.omikuji_cache_expire_days > 0:
+                expire_time = datetime.now() - timedelta(
+                    days=config.omikuji_cache_expire_days
                 )
-            )
-            await session.commit()
+                await session.execute(
+                    delete(SQLOmikujiCache).where(
+                        SQLOmikujiCache.created_date < expire_time.strftime("%Y-%m-%d")
+                    )
+                )
+                await session.commit()
+            if config.omikuji_cache_update_expire_days > 0:
+                expire_time = datetime.now() - timedelta(
+                    days=config.omikuji_cache_update_expire_days
+                )
+                await session.execute(
+                    delete(SQLOmikujiCache).where(
+                        SQLOmikujiCache.updated_date < expire_time.strftime("%Y-%m-%d")
+                    )
+                )
+                await session.commit()

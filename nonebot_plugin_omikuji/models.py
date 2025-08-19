@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import random
+from typing import Literal
 
 from nonebot_plugin_suggarchat.API import (
     FunctionDefinitionSchema,
@@ -13,6 +14,30 @@ from pydantic import BaseModel, Field
 LEVEL = ["大吉", "吉", "中吉", "小吉", "末吉", "凶", "大凶"]
 # 定义权重，让"吉"类签出现概率更高
 LEVEL_WEIGHTS = [10, 30, 20, 15, 10, 5, 2]
+OMIKUJI_THEMES = [
+    "综合运势",  # 默认选项
+    "恋爱姻缘",  # 情感
+    "学业考试",  # 学习
+    "事业财运",  # 工作
+    "健康平安",  # 健康
+    "人际和谐",  # 关系
+    "旅行出行",  # 出行
+    "樱花时节",  # 季节/文化
+    "星幽秘境",  # 奇幻
+    "灵感创意",  # 创作
+]
+THEME_TYPE = Literal[
+    "综合运势",
+    "恋爱姻缘",
+    "学业考试",
+    "事业财运",
+    "健康平安",
+    "人际和谐",
+    "旅行出行",
+    "樱花时节",
+    "星幽秘境",
+    "灵感创意",
+]
 
 
 def random_level() -> str:
@@ -26,7 +51,7 @@ class OmikujiSections(BaseModel):
 
 class OmikujiData(BaseModel):
     level: str = Field(default_factory=random_level)
-    theme: str
+    theme: THEME_TYPE
     sign_number: str
     divine_title: str
     sections: list[OmikujiSections]
@@ -46,6 +71,7 @@ OMIKUJI_SCHEMA_META = ToolFunctionSchema(
                 "theme": FunctionPropertySchema(
                     type="string",
                     description="御神签主题",
+                    enum=OMIKUJI_THEMES,
                 ),
                 "sign_number": FunctionPropertySchema(
                     type="string",
