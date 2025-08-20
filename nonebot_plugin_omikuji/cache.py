@@ -81,6 +81,8 @@ class OmikujiCacheData(BaseModel):
                     )
                     result = await session.execute(stmt)
                     data = result.scalar_one_or_none()
+                    if not data:
+                        return None
                     return cls.model_validate(data, from_attributes=True)
                 else:
                     stmt = select(SQLOmikujiCache).where(

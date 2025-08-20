@@ -62,6 +62,7 @@ class OmikujiData(BaseModel):
 
 OMIKUJI_SCHEMA_META = ToolFunctionSchema(
     strict=True,
+    type="function",
     function=FunctionDefinitionSchema(
         name="御神签",
         description="获取御神签签文",

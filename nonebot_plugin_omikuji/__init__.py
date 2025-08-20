@@ -12,7 +12,7 @@ from importlib import metadata
 
 from nonebot_plugin_suggarchat.API import Menu, ToolsManager
 
-from . import llm_tool, sql_models
+from . import commands, llm_tool, sql_models
 from .cache import OmikujiCache
 from .config import get_cache_dir, get_config
 from .llm_tool import TOOL_DATA
@@ -26,7 +26,7 @@ __plugin_meta__ = PluginMetadata(
     supported_adapters={"~onebot.v11"},
 )
 
-__all__ = ["llm_tool", "sql_models"]
+__all__ = ["commands", "llm_tool", "sql_models"]
 
 
 @get_driver().on_startup
