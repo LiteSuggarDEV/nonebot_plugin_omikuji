@@ -80,6 +80,8 @@ async def generate_omikuji(
     )
     assert data.tool_calls
     args = json.loads(data.tool_calls[0].function.arguments)
+    args["level"] = level
+    args["theme"] = theme
     model = OmikujiData.model_validate(args)
     if level:
         model.level = level

@@ -12,8 +12,6 @@ from nonebot_plugin_suggarchat.API import (
 from pydantic import BaseModel, Field
 
 LEVEL = ["大吉", "吉", "中吉", "小吉", "末吉", "凶", "大凶"]
-# 定义权重，让"吉"类签出现概率更高
-LEVEL_WEIGHTS = [10, 30, 20, 15, 10, 5, 2]
 OMIKUJI_THEMES = [
     "综合运势",  # 默认选项
     "恋爱姻缘",  # 情感
@@ -41,7 +39,7 @@ THEME_TYPE = Literal[
 
 
 def random_level() -> str:
-    return random.choices(LEVEL, weights=LEVEL_WEIGHTS)[0]
+    return random.choice(LEVEL)
 
 
 class OmikujiSections(BaseModel):
@@ -76,7 +74,7 @@ OMIKUJI_SCHEMA_META = ToolFunctionSchema(
                 ),
                 "sign_number": FunctionPropertySchema(
                     type="string",
-                    description="御神签编号(中文大写数字)",
+                    description="御神签编号(随机中文大写数字)",
                 ),
                 "divine_title": FunctionPropertySchema(
                     type="string",
