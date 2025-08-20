@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-omikuji"
-version = "0.1.0"
+version = "0.1.0.post1"
 description = "Nonebot2的御神签插件"
 readme = "README.md"
 requires-python = ">=3.10, <4.0"
@@ -12,14 +12,17 @@ dependencies = [
     "aiofiles>=24.1.0",
     "nonebot-plugin-orm>=0.8.2",
 ]
-license = { text = "GPL-3.0-or-later" }
+license = "GPL-3.0-or-later"
 keywords = ['chat", "suggar", "nonebot']
-
 
 [project.urls]
 "Homepage" = "https://github.com/LiteSuggarDEV/nonebot_plugin_omikuji"
 "Source" = "https://github.com/LiteSuggarDEV/nonebot_plugin_omikuji"
 "Issue Tracker" = "https://github.com/LiteSuggarDEV/nonebot_plugin_omikuji/issues"
+
+[tool.setuptools.packages.find]
+include = ["nonebot_plugin_omikuji*"]
+namespaces = false
 
 [tool.uv]
 dev-dependencies = [
