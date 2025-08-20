@@ -10,7 +10,7 @@ require("nonebot_plugin_localstore")
 require("nonebot_plugin_orm")
 from importlib import metadata
 
-from nonebot_plugin_suggarchat.API import ToolsManager
+from nonebot_plugin_suggarchat.API import Menu, ToolsManager
 
 from . import llm_tool, sql_models
 from .cache import OmikujiCache
@@ -40,6 +40,7 @@ async def init():
     conf = get_config()
     if conf.enable_omikuji:
         ToolsManager().register_tool(TOOL_DATA)
+        Menu().reg_menu("omikuji", "抽御神签", "[可选]主题")
     logger.info("正在初始化缓存数据......")
     os.makedirs(get_cache_dir(), exist_ok=True)
     for cache in get_cache_dir().glob("*.json"):

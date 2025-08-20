@@ -53,7 +53,9 @@ async def _hit_cache_omikuji(
             end=random.choice([i.content for i in cache.end]),
         )
         return model
-async def get_omikuji(
+
+
+async def generate_omikuji(
     theme: THEME_TYPE,
     is_group: bool = False,
     level: str = "",

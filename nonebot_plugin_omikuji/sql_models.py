@@ -3,7 +3,6 @@ from __future__ import annotations
 import asyncio
 from datetime import datetime
 from functools import lru_cache
-from typing import Literal
 
 from nonebot_plugin_orm import Model
 from sqlalchemy import JSON, Index, String, UniqueConstraint
@@ -21,7 +20,7 @@ class OmikujiCache(Model):
     __tablename__ = "omikuji_cache"
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     level: Mapped[str] = mapped_column(String(64), nullable=False)
-    theme: Mapped[Literal[THEME_TYPE]] = mapped_column(String(64), nullable=False)
+    theme: Mapped[THEME_TYPE] = mapped_column(String(64), nullable=False)
     sections: Mapped[dict[str, list[str]]] = mapped_column(
         JSON,
         default={},
