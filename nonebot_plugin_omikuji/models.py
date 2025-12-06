@@ -125,9 +125,9 @@ OMIKUJI_SCHEMA_META = ToolFunctionSchema(
 )
 
 FUNC_META = ToolFunctionSchema(
-    strict=False,
+    strict=True,
     function=FunctionDefinitionSchema(
-        name="御神签(omikuji)",
+        name="omikuji",
         description="抽取一个御神签",
         parameters=FunctionParametersSchema(
             type="object",

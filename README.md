@@ -48,10 +48,10 @@
 - SuggarChat 框架
 - 支持的LLM服务（如OpenAI、Anthropic等）
 
-### 使用pip安装（推荐）
+### 使用nb-cli安装（推荐）
 
 ```bash
-pip install nonebot-plugin-omikuji
+nb plugin install nonebot-plugin-omikuji
 ```
 
 ### 使用uv安装
