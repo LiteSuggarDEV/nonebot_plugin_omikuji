@@ -41,10 +41,12 @@ class Config(BaseModel):
             raise ValueError("omikuji_long_cache_update_days must be greater than 0")
         return self
 
+CONFIG: Config = get_plugin_config(Config)
+CAHCE_DIR: Path = get_cache_dir()
 
 def get_config() -> Config:
-    return get_plugin_config(Config)
+    return CONFIG
 
 
 def get_cache_dir() -> Path:
-    return get_plugin_cache_dir()
+    return CACHE_DIR
