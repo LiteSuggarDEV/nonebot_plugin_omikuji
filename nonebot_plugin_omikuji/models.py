@@ -62,14 +62,14 @@ OMIKUJI_SCHEMA_META = ToolFunctionSchema(
     strict=True,
     type="function",
     function=FunctionDefinitionSchema(
-        name="御神签",
+        name="omikuji_content",
         description="获取御神签签文",
         parameters=FunctionParametersSchema(
             type="object",
             properties={
                 "theme": FunctionPropertySchema(
                     type="string",
-                    description="御神签主题",
+                    description="御神签主题，必须严格遵守给出的枚举值",
                     enum=OMIKUJI_THEMES,
                 ),
                 "sign_number": FunctionPropertySchema(

@@ -1,6 +1,6 @@
 [project]
 name = "nonebot-plugin-omikuji"
-version = "0.1.1"
+version = "0.1.2"
 description = "Nonebot2的御神签插件"
 readme = "README.md"
 requires-python = ">=3.10, <4.0"

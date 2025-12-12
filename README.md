@@ -18,15 +18,15 @@
     <a href="LICENSE">
       <img src="https://img.shields.io/github/license/LiteSuggarDEV/nonebot_plugin_omikuji?style=flat-square" alt="License">
     </a>
-    <a href="https://qm.qq.com/q/PFcfb4296m">
-      <img src="https://img.shields.io/badge/QQ%E7%BE%A4-1002495699-blue?style=flat-square" alt="QQ Group">
+    <a href="https://qm.qq.com/q/IuUVFgs3Mk">
+      <img src="https://img.shields.io/badge/QQ%E7%BE%A4-1006893368-blue?style=flat-square" alt="QQ Group">
     </a>
   </p>
 </div>
 
 ## 🌸 简介
 
-**Omikuji（御神签）** 是一款基于大型语言模型（LLM）的 [NoneBot2](https://nonebot.dev/) 插件，专为 [SuggarChat](https://github.com/LiteSuggarDEV/SuggarChat) 框架设计。该插件为用户提供传统日本神社抽签体验的现代化数字版本，通过 AI 生成个性化、富有文化氛围的签文。
+**Omikuji（御神签）** 是一款基于大型语言模型（LLM）的 [NoneBot2](https://nonebot.dev/) 插件，专为 [SuggarChat](https://github.com/LiteSuggarDEV/nonebot_plugin_suggarchat) 框架设计。该插件为用户提供传统日本神社抽签体验的现代化数字版本，通过 AI 生成个性化、富有文化氛围的签文。
 
 御神签（おみくじ）是日本神道教中一种传统的占卜方式，参拜者在神社或寺庙中摇动签筒，随机抽取一支签，上面写着对未来的预言或建议。本插件将这一传统文化与现代 AI 技术相结合，每次抽取都会根据主题和运势等级生成独特的签文内容。
 
@@ -37,7 +37,6 @@
 - **智能缓存系统**：内置缓存机制，提高响应速度并减少 API 调用
 - **丰富的运势等级**：从大吉到大凶共 7 个等级，增加占卜体验的真实感
 - **灵活配置**：支持多种配置选项，可根据需求调整插件行为
-- **多平台支持**：基于 NoneBot2 开发，支持多种聊天平台
 
 ## 🚀 安装
 

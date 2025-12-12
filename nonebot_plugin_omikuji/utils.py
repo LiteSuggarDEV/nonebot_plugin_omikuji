@@ -94,7 +94,7 @@ async def generate_omikuji(
     return model
 
 
-def format_omikuji(data: OmikujiData, user_name: str | None = ""):
+def format_omikuji(data: OmikujiData, user_name: str = ""):
     ln = "\n"
     msg = f"""{data.intro}
 {(user_name + "，" if user_name else "")}你的签上刻了什么？
